@@ -1,0 +1,12 @@
+/vendor
+/node_modules
+.dockerignore
+.editorconfig
+.env
+.git
+.gitignore
+docker-compose.yml
+Dockerfile
+README.md
+/storage/*.log
+/public/hot

@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/* Estilos para formularios deshabilitados */
+fieldset:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+fieldset:disabled input,
+fieldset:disabled select,
+fieldset:disabled textarea {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}

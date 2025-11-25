@@ -1,0 +1,21 @@
+CREATE TABLE `email_logs` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email_queue_id` VARCHAR(255) NULL,
+  `to_email` VARCHAR(255) NOT NULL,
+  `to_name` VARCHAR(255) NOT NULL,
+  `mail_class` VARCHAR(255) NOT NULL,
+  `mail_data` JSON NULL,
+  `priority` INT NOT NULL DEFAULT 1,
+  `status` VARCHAR(255) NOT NULL DEFAULT 'pending',
+  `response_message` TEXT NULL,
+  `error_message` TEXT NULL,
+  `attempt_number` INT NOT NULL DEFAULT 1,
+  `sent_at` TIMESTAMP NULL,
+  `failed_at` TIMESTAMP NULL,
+  `metadata` JSON NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_to_email_status` (`to_email`, `status`),
+  INDEX `idx_status_created_at` (`status`, `created_at`)
+);
