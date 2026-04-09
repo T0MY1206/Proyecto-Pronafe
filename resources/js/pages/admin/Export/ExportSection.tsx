@@ -1,4 +1,3 @@
-import AppLayoutTitle from '@/components/layouts/AppLayoutTitle';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import { ExcelExportComponent } from '@/components/excel';

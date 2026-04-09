@@ -787,6 +787,15 @@ class DatosEconomicosTableSeeder extends Seeder
         ];
 
         foreach ($datosEconomicos as $dato) {
+            $institutoExiste = DB::table('institutos')
+                ->where('cue', $dato['cue'])
+                ->exists();
+
+            if (!$institutoExiste) {
+                $this->command->warn("Se omite CUE inexistente en institutos: " . $dato['cue']);
+                continue;
+            }
+
             // Verificar si ya existe un registro para este CUE y año
             $registroExistente = DB::table('datos')
                 ->where('cue', $dato['cue'])

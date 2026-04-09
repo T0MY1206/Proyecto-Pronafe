@@ -1,7 +1,5 @@
 import { Instituto } from '@/types';
 import { useEffect } from 'react';
-import { router } from '@inertiajs/react';
-import FormularioDatos from '@/components/forms/FormularioDatos';
 
 interface InstitutoDetailsModalProps {
     isOpen: boolean;
@@ -11,20 +9,8 @@ interface InstitutoDetailsModalProps {
 }
 
 export default function InstitutoDetailsModal({ isOpen, onClose, instituto, datoEspecifico }: InstitutoDetailsModalProps) {
-    if (!instituto) return null;
-
-    // Debug para verificar las autoridades
-    console.log('Instituto en modal:', instituto);
-    console.log('Autoridades:', instituto.autoridades);
-    console.log('Dato específico:', datoEspecifico);
-
-    const handleEdit = () => {
-        console.log(instituto)
-        // Para instituto, redirigir a la página de edición de perfil o datos
-        router.get(route('instituto.profile'))
-    }
-
     useEffect(() => {
+        if (!instituto) return;
         if (isOpen) {
             // Ocultar la navegación cuando el modal está abierto
             const topBar = document.querySelector('.top-bar');
@@ -61,7 +47,9 @@ export default function InstitutoDetailsModal({ isOpen, onClose, instituto, dato
                 (sideNav as HTMLElement).style.display = '';
             }
         };
-    }, [isOpen]);
+    }, [isOpen, instituto]);
+
+    if (!instituto) return null;
 
     if (!isOpen) return null;
 

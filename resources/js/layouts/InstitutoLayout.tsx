@@ -1,4 +1,4 @@
-import { Head, usePage } from "@inertiajs/react";
+import { usePage } from "@inertiajs/react";
 import { TopBar } from "./components/TopBar";
 import { BreadcrumbItem } from "@/types";
 import { useEffect, useState } from "react";
@@ -71,26 +71,26 @@ export function InstitutoLayout({ children, breadcrumb }: AdminLayoutProps) {
     }
 
     return <>
-        <Head>
-            <link rel="stylesheet" href="/assets/css/tinker.css" />
-        </Head>
-
         <AppMobileMenu></AppMobileMenu>
 
-        <div className="flex overflow-hidden">
-            <AppMenuInstituto></AppMenuInstituto>
-            <div className="content">
-                <TopBar breadcrumb={breadcrumb} onMenuOpen={openMenues}></TopBar>
-
-                {children}
+        <AppMenuInstituto />
+        <div className="content flex w-full max-w-full flex-col px-0 md:pl-60">
+            <div className="shrink-0 px-4 md:px-6 lg:px-8">
+                <TopBar
+                    breadcrumb={breadcrumb}
+                    onMenuOpen={openMenues}
+                    userMenuOpen={showMenuUsers}
+                    userMenu={
+                        <AppMenuUser show={showMenuUsers} setShow={setShowMenuUsers}>
+                            <AppMenuUserItem title="Perfil" icon="user" url="instituto.profile" />
+                        </AppMenuUser>
+                    }
+                />
             </div>
+            <div className="w-full min-w-0 px-4 md:px-6 lg:px-8">{children}</div>
         </div>
 
         <ToastContainer></ToastContainer>
-
-        <AppMenuUser show={showMenuUsers} setShow={setShowMenuUsers}>
-            <AppMenuUserItem title="Perfil" icon="user" url="instituto.profile"></AppMenuUserItem>
-        </AppMenuUser>
 
         <AppMenuNotifications show={showMenuNotifications} setShow={setShowMenuNotifications}></AppMenuNotifications>
     </>;

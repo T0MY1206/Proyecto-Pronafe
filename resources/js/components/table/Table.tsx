@@ -45,7 +45,8 @@ export default function Table({
                     {children}
                 </div>
 
-                <div className="intro-y col-span-12 overflow-auto lg:overflow-visible">
+                <div className="intro-y col-span-12 max-w-full">
+                    <div className="max-w-full overflow-x-auto overscroll-x-contain">
                     <table className="table table-report">
                         <TableHead head={head} options={options ?? rows} hasAction={(actions?.length ?? 0) > 0} />
                         <TableBody
@@ -57,6 +58,7 @@ export default function Table({
                             expandedRowComponent={expandedRowComponent}
                         />
                     </table>
+                    </div>
                 </div>
             </div>
 

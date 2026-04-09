@@ -1,5 +1,4 @@
-import { AdminLayout } from "@/layouts/AdminLayout";
-import { Head, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { useState } from "react";
 
 interface PeriodoActual {
@@ -21,7 +20,7 @@ interface Props {
 export default function ExportIndex({ periodoActual, provincias }: Props) {
     const [isExporting, setIsExporting] = useState(false);
     
-    const { data, setData, post, processing, errors } = useForm({
+    const { data } = useForm({
         anio: periodoActual?.anio || new Date().getFullYear(),
         provincia_id: ''
     });
@@ -79,7 +78,7 @@ export default function ExportIndex({ periodoActual, provincias }: Props) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
+        <div className="bg-gray-100 p-8">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold text-gray-900 mb-8">Exportar Datos</h1>
                 

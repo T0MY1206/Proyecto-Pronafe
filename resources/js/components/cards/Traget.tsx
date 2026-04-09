@@ -1,18 +1,16 @@
-
 export interface TargetData {
-    title: string,
-    totalValue: number
+    title: string;
+    totalValue: number;
 }
 
-export default function Target( { title, totalValue }: TargetData) {
-    //  agregar lógica adicional si es necesario
+export default function Target({ title, totalValue }: TargetData) {
     return (
-        <div className="col-span-12 sm:col-span-6 2xl:col-span-3 intro-x w-full">
-            <div className="box p-5 zoom-in h-full">
-                    <div className="w-fit d-flex ">
-                        <div className="text-lg font-medium ">{title}</div>
-                        <div className="text-gray-600 mt-1 font-bold">{totalValue}</div>
-                    </div>
+        <div className="intro-x min-w-0 flex-1">
+            <div className="zoom-in flex h-full min-h-[5.5rem] flex-col justify-center rounded-xl border border-slate-400/45 bg-slate-200/90 px-4 py-3 shadow-md shadow-slate-600/10 transition-shadow duration-200 hover:shadow-lg">
+                <div className="text-sm font-medium text-slate-600">{title}</div>
+                <div className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-slate-900">
+                    {totalValue}
+                </div>
             </div>
         </div>
     );

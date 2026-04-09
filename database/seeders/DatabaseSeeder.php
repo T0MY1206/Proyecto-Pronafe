@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -45,6 +46,22 @@ class DatabaseSeeder extends Seeder
         $this->call([
             InstitutosTableSeeder::class,
         ]);
+
+        // Dataset histórico usa anio=2024 en tabla datos; garantizar período para FK.
+        DB::table('actualizaciones')->updateOrInsert(
+            ['anio' => 2024],
+            [
+                'fecha_matriculados' => '2024-03-01',
+                'fecha_1_egresados' => '2024-06-30',
+                'fecha_2_egresados' => '2024-12-31',
+                'fecha_tope' => '2024-12-31',
+                'user_id' => 1,
+                'activo' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
         $this->call([
             DatosTableSeeder::class,
         ]);

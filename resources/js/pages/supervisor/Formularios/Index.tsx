@@ -1,7 +1,7 @@
 import { SupervisorLayout } from '@/layouts/SupervisorLayout';
 import AppLayoutTitle from '@/components/layouts/AppLayoutTitle';
 import Table from '@/components/table/Table';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface Formulario {
@@ -166,20 +166,21 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
                                 <select
                                     name="estado"
                                     defaultValue={filters.estado || ''}
-                                    className="form-select"
+                                    className="app-input max-w-xs"
                                     onChange={(e) => {
-                                        const form = e.target.closest('form') || document.createElement('form');
+                                        const target = e.target as HTMLSelectElement;
+                                        const form = target.closest('form') || document.createElement('form');
                                         form.method = 'GET';
                                         form.action = route('supervisor.formularios.index');
                                         
                                         const estadoInput = form.querySelector('input[name="estado"]') as HTMLInputElement;
                                         if (estadoInput) {
-                                            estadoInput.value = e.target.value;
+                                            estadoInput.value = target.value;
                                         } else {
                                             const input = document.createElement('input');
                                             input.type = 'hidden';
                                             input.name = 'estado';
-                                            input.value = e.target.value;
+                                            input.value = target.value;
                                             form.appendChild(input);
                                         }
                                         
@@ -199,21 +200,22 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
                                     name="search"
                                     defaultValue={filters.search || ''}
                                     placeholder="Buscar por nombre o CUE..."
-                                    className="form-control"
-                                    onKeyPress={(e) => {
+                                    className="app-input"
+                                    onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            const form = e.target.closest('form') || document.createElement('form');
+                                            const target = e.target as HTMLInputElement;
+                                            const form = target.closest('form') || document.createElement('form');
                                             form.method = 'GET';
                                             form.action = route('supervisor.formularios.index');
                                             
                                             const searchInput = form.querySelector('input[name="search"]') as HTMLInputElement;
                                             if (searchInput) {
-                                                searchInput.value = e.target.value;
+                                                searchInput.value = target.value;
                                             } else {
                                                 const input = document.createElement('input');
                                                 input.type = 'hidden';
                                                 input.name = 'search';
-                                                input.value = e.target.value;
+                                                input.value = target.value;
                                                 form.appendChild(input);
                                             }
                                             
@@ -240,13 +242,13 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowConfirmModal(false)}
-                                className="btn btn-secondary"
+                                className="app-btn-secondary"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={confirmAction}
-                                className={`btn ${actionType === 'aprobar' ? 'btn-success' : 'btn-danger'}`}
+                                className={actionType === 'aprobar' ? 'app-btn-primary' : 'app-btn rounded-xl bg-red-600 text-white hover:bg-red-700'}
                             >
                                 {actionType === 'aprobar' ? 'Aprobar' : 'Rechazar'}
                             </button>

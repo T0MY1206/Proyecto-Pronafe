@@ -1,296 +1,170 @@
-# 📧 Sistema de Envío de Emails - Documentación Completa
+# PRONAFE - Sistema de Gestión de Actualizaciones Institucionales
 
-## 📋 Tabla de Contenidos
-- [Configuración](#configuración)
-- [Comandos de Email](#comandos-de-email)
-- [Vistas de Email](#vistas-de-email)
-- [Control de Envío](#control-de-envío)
-- [Logs y Monitoreo](#logs-y-monitoreo)
-- [Archivos de Prueba](#archivos-de-prueba)
+Aplicación web para administrar la carga, revisión y seguimiento de datos de institutos de enfermería, con flujos diferenciados por rol:
 
----
+- `Administrador`: gestiona períodos, institutos, usuarios y exportaciones.
+- `Supervisor`: revisa formularios y aprueba/rechaza envíos.
+- `Instituto`: carga y actualiza información institucional.
 
-## ⚙️ Configuración
+## Tecnologías utilizadas
 
-### Variables de Entorno (.env)
+### Backend
+- PHP `8.2+`
+- Laravel `12`
+- Inertia Laravel
+- Sanctum
+- Maatwebsite Excel
+- **MySQL** (o MariaDB) para la aplicación en desarrollo y producción (configuración en `.env`).
 
-```env
-# Configuración de Email
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=tu_cuenta@gmail.com
-MAIL_PASSWORD=tu_app_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=instituto93@gmail.com
-MAIL_FROM_NAME="Prueba INET"
+### Frontend
+- React `19` + TypeScript
+- Inertia React
+- Vite `6`
+- Tailwind CSS `4`
+- Radix UI (componentes base)
 
-# Control de Notificaciones Automáticas
-ENABLE_EMAIL_NOTIFICATIONS=true
+### Pruebas automatizadas
+- **Backend:** [Pest](https://pestphp.com/) 3 sobre PHPUnit; migraciones ejecutadas contra **SQLite en memoria** solo durante `php artisan test` (definido en `phpunit.xml`), sin sustituir MySQL en runtime.
+- **Frontend:** [Vitest](https://vitest.dev/), [React Testing Library](https://testing-library.com/react), [jsdom](https://github.com/jsdom/jsdom), `@testing-library/user-event`.
+
+### Herramientas de calidad
+- ESLint
+- Prettier
+- TypeScript (`tsc --noEmit`)
+
+## Arquitectura y principios
+
+El proyecto mantiene una base Laravel MVC con separación por contexto de rol y mejoras aplicadas hacia una arquitectura más limpia:
+
+- separación por módulos de negocio (`Admin`, `Supervisor`, `Instituto`),
+- extracción de lógica de negocio a servicios (`app/Services`),
+- reducción de lógica transversal en controladores,
+- configuración desacoplada desde `config/*` en lugar de uso directo de `env()` en runtime.
+
+Principios aplicados:
+- `SRP`: responsabilidades más acotadas entre controlador y servicio.
+- `DIP`: controladores dependen de servicios para operaciones de dominio.
+- `DRY`: consolidación de lógica repetida de flujo de estados/notificaciones.
+
+## Requisitos de entorno
+
+- PHP `8.2` o superior
+- Composer `2.x`
+- Node.js `20+`
+- npm `10+`
+- Base de datos compatible con Laravel (MySQL/MariaDB recomendado)
+
+## Instalación rápida
+
+```bash
+git clone <url-del-repo>
+cd Proyecto-Pronafe
+
+composer install
+npm install
+
+cp .env.example .env
+php artisan key:generate
+
+php artisan migrate:fresh --seed
 ```
 
-## 🚀 Comportamiento del envío y comandos de Email
+## Levantar el proyecto
 
-### Envío por lotes (throttling)
-- Tamaño de lote: 20 emails por lote
-- Pausa entre lotes: 30 segundos
-- Dónde se implementa:
-  - `app/Http/Controllers/Admin/ActualizacionesController::enviarNotificacionesInstitutos()`
-  - `app/Console/Commands/EnviarContrasenasInstitutos`
-- Motivo: evitar límites/antispam del proveedor SMTP
-- Actualmente es un valor fijo en código; si deseas, podemos parametrizarlo por `.env`.
+### Desarrollo (backend + cola + Vite)
+```bash
+composer run dev
+```
 
-### 1. Crear Usuarios para Institutos
+### Solo frontend
+```bash
+npm run dev
+```
+
+### Solo backend
+```bash
+php artisan serve
+```
+
+## Estrategia de pruebas
+
+- **Backend:** pruebas de características (HTTP, middleware por rol, rutas API) y pruebas de servicios en `app/Services` con base de datos aislada por test.
+- **Frontend:** pruebas unitarias de utilidades (`resources/js/lib`) y de componentes con props claras; las pantallas Inertia completas no están cubiertas por defecto (evitan mocks pesados de `usePage`).
+- Requisitos: `composer install` y `npm install`; variables opcionales en `.env.testing` si en el futuro se parametriza otro entorno de test.
+
+## Scripts útiles
+
+### Calidad y build
+```bash
+npm run lint
+npm run types
+npm run build
+composer test
+```
+
+### Pruebas (backend)
+```bash
+composer test
+php artisan test
+php artisan test --filter=NombreDelTest
+```
+
+### Pruebas (frontend)
+```bash
+npm run test
+npm run test:watch
+npm run test:coverage
+```
+
+La cobertura de código PHP opcional (`--coverage`) requiere la extensión PCOV o Xdebug en el entorno local.
+
+### Base de datos
+```bash
+php artisan migrate
+php artisan migrate:fresh --seed
+php artisan db:seed
+```
+
+### Cache y configuración
+```bash
+php artisan optimize:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+### Comandos funcionales del dominio
 ```bash
 php artisan institutos:crear-usuarios
-```
-
-**Descripción**: Crea usuarios para todos los institutos que no tengan usuario asociado.
-
-**Parámetros**:
-- `--force`: Forzar creación incluso si ya existen usuarios
-
-**Funcionalidad**:
-- Busca institutos activos sin usuario asociado
-- Genera contraseñas genéricas (3 letras + 3 números)
-- Crea usuarios con rol de instituto (rol_id = 3)
-- Asocia el usuario con el CUE del instituto
-
-**Ejemplo de salida**:
-```
-🔍 Buscando institutos sin usuario asociado...
-📊 Encontrados 5 institutos sin usuario.
-✅ Usuario creado para Instituto Tomás Tutor
-   📧 Email: tomas2000tutor@gmail.com
-   🔑 Contraseña: INS123
-```
-
-### 2. Enviar Contraseñas por Email
-```bash
 php artisan institutos:enviar-contrasenas
 ```
 
-**Descripción**: Envía contraseñas genéricas por email a todos los institutos con usuarios asociados.
+## Flujo funcional resumido
 
-**Parámetros**:
-- `--periodo=ID`: Especificar período de actualización por ID
+1. Administración define período de actualización.
+2. Institutos cargan formularios y datos.
+3. Supervisores revisan estados y procesan aprobación/rechazo.
+4. Administración explota información y exporta reportes.
 
-**Funcionalidad**:
-- Busca institutos activos con usuarios asociados
-- Genera nuevas contraseñas genéricas
-- Envía emails por lotes de 20 con pausa de 30 segundos entre cada lote (throttling)
-- Registra logs de éxito y error en base de datos
-- Usa el período activo o el especificado
+## Notas operativas
 
-**Ejemplo de uso**:
+- El login utiliza `login_user_name` como identificador principal.
+- Existen tests del starter kit de Laravel marcados como `skip` por no aplicar al flujo real del producto.
+- La capa visual está estandarizada sobre Tailwind v4 y en migración progresiva de estilos legacy.
+
+## Troubleshooting
+
+### Error de assets de Vite
 ```bash
-# Usar período activo
-php artisan institutos:enviar-contrasenas
-
-# Usar período específico
-php artisan institutos:enviar-contrasenas --periodo=1
+npm install
+npm run build
+php artisan optimize:clear
 ```
 
-**Ejemplo de salida**:
-```
-📧 Enviando contraseñas genéricas a institutos...
-📊 Encontrados 10 institutos con usuarios.
-📅 Usando período: 2025
-📧 Enviando emails con credenciales por lotes...
-📊 Total institutos: 10
-📦 Lotes de 20 emails con 30s de pausa entre lotes
-✅ Email enviado a Instituto Tomás Tutor (tomas2000tutor@gmail.com)
-⏳ Esperando 30 segundos antes del siguiente lote...
-📈 Resumen del envío:
-   ✅ Emails enviados: 10
-```
-
----
-
-## 📧 Vistas de Email
-
-### Ubicación de Archivos
-```
-resources/views/emails/
-├── notificacion-inicio-periodo.blade.php
-└── notificacion-inicio-actualizacion.blade.php
-```
-
-### 1. Notificación de Inicio de Período
-**Archivo**: `notificacion-inicio-periodo.blade.php`
-**Uso**: Se envía cuando se crea un nuevo período de actualización
-**Contenido**:
-- Saludo personalizado al instituto
-- Información del período (año)
-- Fechas importantes (matriculados, egresados, tope)
-- Instrucciones para acceder al sistema
-
-### 2. Notificación de Inicio de Actualización
-**Archivo**: `notificacion-inicio-actualizacion.blade.php`
-**Uso**: Se envía con las credenciales de acceso
-**Contenido**:
-- Credenciales de acceso (email y contraseña temporal)
-- Enlace directo al sistema
-- Instrucciones detalladas de uso
-- Fechas importantes del período
-
----
-
-## 🎛️ Control de Envío
-
-### Variable de Control
-```env
-ENABLE_EMAIL_NOTIFICATIONS=true
-```
-
-**Valores**:
-- `true`: Los emails se envían automáticamente (producción)
-- `false`: Los emails NO se envían (desarrollo)
-
-### Comportamiento por Entorno
-
-#### Desarrollo (ENABLE_EMAIL_NOTIFICATIONS=false)
-- ✅ Se crean las actualizaciones normalmente
-- ❌ NO se envían emails automáticamente
-- 📝 Mensaje: "Actualización guardada correctamente (emails deshabilitados)"
-
-#### Producción (ENABLE_EMAIL_NOTIFICATIONS=true)
-- ✅ Se crean las actualizaciones normalmente
-- ✅ Se envían emails automáticamente
-- 📝 Mensaje: "Actualización guardada correctamente y emails enviados"
-
-### Lugares donde se aplica el control:
-1. **ActualizacionesController**: Al crear nueva actualización
-2. **PeriodoActualizacionController**: Al crear nuevo período
-
----
-
-## 📊 Logs y Monitoreo
-
-### Tabla de Logs
-**Tabla**: `email_logs`
-**Modelo**: `App\Models\EmailLog`
-
-### Campos principales:
-- `to_email`: Email destinatario
-- `to_name`: Nombre del destinatario
-- `mail_class`: Clase del email enviado
-- `status`: Estado del envío (sent, failed, pending)
-- `sent_at`: Fecha de envío exitoso
-- `failed_at`: Fecha de error
-- `error_message`: Mensaje de error si falla
-- `metadata`: Datos adicionales en JSON
-
-### Tipos de Email:
-- `inicio_periodo`: Notificación de inicio de período
-- `credenciales`: Envío de credenciales
-
-### Estados:
-- `sent`: Email enviado exitosamente
-- `failed`: Error en el envío
-- `pending`: Pendiente de envío
-
-### Consultas útiles:
-```php
-// Estadísticas por período
-EmailLog::estadisticasPorPeriodo(2025);
-
-// Emails con errores
-EmailLog::emailsConErrores(2025);
-
-// Todos los logs
-EmailLog::obtenerLogsCompletos();
-```
-
----
-
-## 🧪 Archivos de Prueba
-
-### Archivo de Emails de Prueba
-**Archivo**: `emails_prueba.txt`
-**Ubicación**: Raíz del proyecto
-**Contenido**: Lista de emails de prueba para testing
-
-**Formato**:
-```
-test1@example.com
-test2@example.com
-test3@example.com
-admin@correo.com
-supervisor@correo.com
-instituto@correo.com
-```
-
-### Uso para Testing
-1. Reemplaza emails en `emails_prueba.txt` con direcciones de prueba
-2. Usa estos emails para comandos de prueba
-3. Nunca uses este archivo en producción
-
----
-
-## 🔧 Comandos de Mantenimiento
-
-### Limpiar caché de configuración
+### Problemas de migraciones o seeders
 ```bash
-php artisan config:clear
-php artisan cache:clear
+php artisan migrate:fresh --seed
 ```
 
-### Verificar configuración de email
-```bash
-php artisan tinker
->>> config('mail.from.address')
->>> config('mail.default')
-```
-
-### Ver logs de email
-```bash
-tail -f storage/logs/laravel.log
-```
-
----
-
-## ⚠️ Consideraciones Importantes
-
-### Límites de Gmail SMTP
-- Máximo 500 emails por día
-- Máximo 100 emails por hora
-- Delay recomendado entre lotes: 30 segundos
-
-### Seguridad
-- Usar App Passwords de Gmail, no contraseñas normales
-- Nunca commitear credenciales en el código
-- Usar variables de entorno para todas las configuraciones
-
-### Monitoreo
-- Revisar logs regularmente
-- Verificar tabla `email_logs` para estadísticas
-- Configurar alertas para errores masivos
-
----
-
-## 🆘 Solución de Problemas
-
-### Error: "Column not found: login_user_name"
-**Solución**: Ejecutar migraciones
-```bash
-php artisan migrate
-```
-
-### Error: "Table 'email_logs' doesn't exist"
-**Solución**: Ejecutar migración de email_logs
-```bash
-php artisan migrate
-```
-
-### Emails no se envían
-**Verificar**:
-1. Configuración SMTP en `.env`
-2. Variable `ENABLE_EMAIL_NOTIFICATIONS`
-3. Logs en `storage/logs/laravel.log`
-
-### Gmail rechaza emails
-**Solución**:
-1. Verificar App Password
-2. Reducir frecuencia de envío
-3. Usar delay entre lotes
+### Fallos de autenticación en testing
+- Verificar que los tests usen `login_user_name` en lugar de `email`.

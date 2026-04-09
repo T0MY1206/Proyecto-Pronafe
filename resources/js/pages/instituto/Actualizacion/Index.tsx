@@ -21,7 +21,7 @@ interface Props {
     autoridadesHeredadas?: boolean
 }
 
-export default function DashboardIndex({ tiposDeInstitucion = [], localidades = [], instituto,
+export default function DashboardIndex({ tiposDeInstitucion: _tiposDeInstitucion = [], localidades = [], instituto,
     actualizacion, estadoActualizacion, datos, autoridades, autoridadesHeredadas = false }: Props) {
 
     // Estado para controlar el bloqueo/desbloqueo de autoridades heredadas

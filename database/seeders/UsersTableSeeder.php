@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UsersTableSeeder extends Seeder
 {
@@ -2656,6 +2657,39 @@ class UsersTableSeeder extends Seeder
             ],
 
         ];
+
+        // Generar login_user_name único para cada usuario (requerido por esquema actual)
+        $usedLoginNames = array_fill_keys(
+            DB::table('users')
+                ->whereNotNull('login_user_name')
+                ->pluck('login_user_name')
+                ->all(),
+            true
+        );
+
+        foreach ($users as &$user) {
+            $baseLogin = Str::of($user['email'] ?? $user['name'] ?? 'user')
+                ->before('@')
+                ->lower()
+                ->ascii()
+                ->replaceMatches('/[^a-z0-9]+/', '_')
+                ->trim('_')
+                ->value();
+
+            if ($baseLogin === '') {
+                $baseLogin = 'user';
+            }
+
+            $candidate = $baseLogin;
+            $suffix = 1;
+            while (isset($usedLoginNames[$candidate])) {
+                $candidate = $baseLogin . '_' . $suffix++;
+            }
+
+            $user['login_user_name'] = $candidate;
+            $usedLoginNames[$candidate] = true;
+        }
+        unset($user);
 
         // Insertar usuarios en lotes para evitar problemas de rendimiento
         $chunks = array_chunk($users, 5);

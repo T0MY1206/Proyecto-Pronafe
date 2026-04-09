@@ -15,7 +15,7 @@ interface Props {
     provincias: Provincia[]
 }
 
-export default function Create({ roles, provincias }: Props) {
+export default function Create({ roles: _roles, provincias }: Props) {
     const { data, setData, reset, post, processing, errors } = useForm({
         name: '',
         email: '',

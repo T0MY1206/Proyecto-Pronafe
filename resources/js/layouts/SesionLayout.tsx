@@ -1,54 +1,56 @@
-import ApplicationLogo from "@/components/ApplicationLogo";
-import { ReactNode, useEffect } from "react";
-import { Head } from "@inertiajs/react";
+import ApplicationLogo from '@/components/ApplicationLogo';
+import { ReactNode, useEffect } from 'react';
 
 interface LayoutSesionProps {
-    children: ReactNode
+    children: ReactNode;
 }
 
-export default function ({ children }: LayoutSesionProps) {
+export default function SesionLayout({ children }: LayoutSesionProps) {
     useEffect(() => {
         document.body.classList.add('login');
         document.body.classList.remove('main');
 
         return () => {
             document.body.classList.remove('login');
-        }
+        };
     }, []);
 
-    return <>
-    <Head>
-        <link rel="stylesheet" href="/assets/css/tinker.css" />
-    </Head>
-        <div className="container sm:px-10">
-            <div className="block xl:grid grid-cols-2 gap-4">
-                <div className="hidden xl:flex flex-col min-h-screen">
-                    <a href="" className="-intro-x flex items-center pt-5">
-                        <ApplicationLogo width={30} height={30}></ApplicationLogo>
+    return (
+        <div className="min-h-screen bg-slate-200/90">
+            <div className="mx-auto grid min-h-screen max-w-[1600px] xl:grid-cols-2">
+                {/* Panel marca / ilustración */}
+                <div className="flex flex-col bg-gradient-to-br from-brand-700 via-brand-700 to-brand-900 px-6 pb-10 pt-8 text-white sm:px-10 xl:min-h-screen xl:justify-between xl:px-12 xl:pb-16 xl:pt-10">
+                    <a
+                        href={route('home')}
+                        className="inline-flex w-fit items-center gap-2 rounded-lg py-1 text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
+                        <ApplicationLogo width={32} height={32} />
+                        <span className="text-sm font-medium">PRONAFE</span>
                     </a>
-                    <div className="my-auto">                       
-                        {/* <img alt="Tinker Tailwind HTML Admin Template" className="-intro-x w-1/2 -mt-16" src="/assets/svg/illustration.svg" /> */}
-                        <img src="/assets/images/Enfermeria.png" style={{ width: "450px", height: "auto" }} className="-intro-x rounded-xl -mt-16" />
-                        <div className="-intro-x text-white font-medium text-4xl leading-tight mt-10">
-                            
-                           Bienvenido al Sistema 
-                            <br />
-                            PRONAFE
-                        </div>
-                          <div className="-intro-x mt-5 text-lg text-white text-opacity-70">
-                            Gestiona la creación y actualización de institutos
-                            de la rama de Enfermería.
-                        </div>
 
-                        
+                    <div className="mt-8 flex flex-1 flex-col justify-center xl:mt-0">
+                        <img
+                            src="/assets/images/Enfermeria.png"
+                            alt=""
+                            className="mx-auto max-h-44 w-auto max-w-full rounded-2xl shadow-xl ring-1 ring-white/20 sm:max-h-52 xl:mx-0 xl:max-h-none xl:w-[min(100%,420px)]"
+                        />
+                        <h1 className="mt-8 text-center text-2xl font-semibold leading-tight tracking-tight sm:text-3xl xl:text-left xl:text-4xl">
+                            Bienvenido al sistema
+                            <span className="block text-white/95">PRONAFE</span>
+                        </h1>
+                        <p className="mx-auto mt-4 max-w-md text-center text-base text-white/80 sm:text-lg xl:mx-0 xl:text-left">
+                            Gestión de institutos y actualización de datos de la rama de Enfermería.
+                        </p>
                     </div>
                 </div>
-                <div className="h-screen xl:h-auto flex py-5 xl:py-0 my-10 xl:my-0">
-                    <div className="my-auto mx-auto xl:ml-20 bg-white dark:bg-dark-1 xl:bg-transparent px-5 sm:px-8 py-8 xl:p-0 rounded-md shadow-md xl:shadow-none w-full sm:w-3/4 lg:w-2/4 xl:w-auto">
+
+                {/* Formulario: fondo suave + tarjeta clara */}
+                <div className="flex items-stretch justify-center bg-slate-100 px-4 py-8 sm:px-6 sm:py-12 xl:items-center xl:py-16">
+                    <div className="w-full max-w-md rounded-2xl border border-slate-200/90 bg-white p-8 shadow-xl shadow-slate-300/40 sm:p-10">
                         {children}
                     </div>
                 </div>
             </div>
         </div>
-    </>;
+    );
 }

@@ -107,7 +107,11 @@ export default function PeriodosIndex({ periodos }: Props) {
                                                         href={route('admin.periodos.destroy', periodo.anio)}
                                                         method="delete"
                                                         className="text-red-600 hover:text-red-900 text-sm font-medium"
-                                                        confirm="¿Estás seguro de que quieres eliminar este período?"
+                                                        onClick={(event) => {
+                                                            if (!window.confirm('¿Estás seguro de que quieres eliminar este período?')) {
+                                                                event.preventDefault();
+                                                            }
+                                                        }}
                                                     >
                                                         Eliminar
                                                     </Link>

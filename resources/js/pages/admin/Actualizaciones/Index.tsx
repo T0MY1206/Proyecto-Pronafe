@@ -1,24 +1,17 @@
 import { AdminLayout } from '@/layouts/AdminLayout';
 import AppLayoutTitle from "@/components/layouts/AppLayoutTitle";
-import Search from "@/components/table/Search";
 import Table from "@/components/table/Table";
-import { usePage, Head, router } from '@inertiajs/react';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { UpdatesPageProps, ProvinceDropdownItem } from "@/types/UpdatePageProps";
+import { Head, router } from '@inertiajs/react';
+import { useState, useCallback } from 'react';
+import { ProvinceDropdownItem } from "@/types/UpdatePageProps";
 import Target from "@/components/cards/Traget";
 import AppIcon from "@/components/Icons/AppIcon";
 import axios from 'axios';
 import CakeGraphics, { ChartDataItem } from '@/components/charts/CakeChart';
 import ExpandedRowForm from '@/components/table/Custom/ExpandedRowForm';
+import FormSelect from '@/components/form/FormSelect/FormSelect';
 
 export default function Updates({initialData, allYears, allProvinces, filters, options}) {
-
-    //Estados para filtros y datos dinámicos
-    const [apiData, setApiData] = useState<any>(null);
-    const [currentSelectedYear, setCurrentSelectedYear] = useState(allYears?.[0]?.value || '');
-    const [currentperPage, setCurrentPerPage] = useState(10); // ← Nuevo estado para items por página
-    const [currentPage, setCurrentPage] =useState (1);
-    const [searchTerm, setSearchTerm] = useState("");
 
     const ambito_gestion = filters?.ambito_gestion;
     const provincia_id = filters?.provincia_id;
@@ -66,16 +59,27 @@ export default function Updates({initialData, allYears, allProvinces, filters, o
         }
     };
 
-    // funciones para manejar la paginación exclusivamente
-    const handlePageChange = useCallback((page: number) => {
-        setCurrentPage(page);
-    }, []);
+    const handlePageChange = useCallback(
+        (page: number) => {
+            router.get(
+                route('admin.actualizaciones.index'),
+                { ...filters, page },
+                { preserveState: true, preserveScroll: true },
+            );
+        },
+        [filters],
+    );
 
-    const handlePerPageChange = useCallback((newPerPage: number) => {
-        setCurrentPerPage(newPerPage);
-        setCurrentPage(1); // Siempre resetear a la primera página al cambiar la cantidad de elementos por página
-
-    }, []);
+    const handlePerPageChange = useCallback(
+        (newPerPage: number) => {
+            router.get(
+                route('admin.actualizaciones.index'),
+                { ...filters, page: 1, limit: newPerPage },
+                { preserveState: true, preserveScroll: true },
+            );
+        },
+        [filters],
+    );
 
     // Botón de reporte
     const [showReports, setShowReports] = useState(false);
@@ -118,30 +122,27 @@ export default function Updates({initialData, allYears, allProvinces, filters, o
                 <title>Actualizacion</title>
             </Head>
             {/* TITULO Y SELECTOR DE AÑO */}
-            <div className="grid grid-cols-12 gap-6 mt-2">
-                <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+            <div className="mt-2 w-full">
+                <div className="intro-y flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
                     <AppLayoutTitle title="Actualización de datos" />
-                    <div className="ml-4">
-                        <select
-                            id="anioSelect"
-                            name="anioSelect"
-                            value={anio}
-                            onChange={e => handleFilterChange({anio: e.target.value})}
-                            className="form-control w-auto min-w-[100px]"
-                        >
-                            {allYears.map(yearItem => (
-                                <option key={yearItem.value} value={yearItem.value}>
-                                    {yearItem.label}
-                                </option>
-                            ))}
-                        </select>
+                    <div className="w-full min-w-[10rem] sm:w-auto sm:max-w-xs">
+                        <FormSelect
+                            name="anio"
+                            label="Año"
+                            items={allYears.map((y) => ({ value: y.value, label: y.label }))}
+                            value={anio != null && String(anio) !== '' ? String(anio) : null}
+                            multiple={false}
+                            canDeselect={false}
+                            onChange={(e) => handleFilterChange({ anio: e.target.value })}
+                            errors={undefined}
+                        />
                     </div>
                 </div>
             </div>
             {/* FILTROS */}
-            <div className="grid grid-cols-12 gap-6 mt-2">
-                <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-                    <div className="flex gap-2 mr-4">
+            <div className="mt-4 w-full">
+                <div className="intro-y flex w-full flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center">
+                    <div className="flex flex-wrap gap-2">
                         <button
                             type="button"
                             className={`btn btn-primary shadow-md mr-2 focus:outline-none focus:ring-0 ${!ambito_gestion ? 'bg-gray-700 border-gray-600' : 'border-transparent'}`}
@@ -165,23 +166,29 @@ export default function Updates({initialData, allYears, allProvinces, filters, o
                         </button>
                     </div>
                     
-                    <div className="flex gap-4 ml-auto">
-                        <div>
-                            <select
-                                id="provinceSelect"
-                                name="provinceSelect"
-                                onChange={e => handleFilterChange({provincia_id: e.target.value})}
-                                className="form-control w-auto min-w-[100px]"
-                                value={provincia_id}
-                            >
-                                {provincesWithAllOption.map(provinceItem => (
-                                    <option key={provinceItem.value} value={provinceItem.value}>
-                                        {provinceItem.label}
-                                    </option>
-                                ))}
-                            </select>
+                    <div className="flex w-full flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end lg:ml-auto lg:w-auto lg:justify-end">
+                        <div className="w-full min-w-[12rem] sm:w-56 lg:min-w-[14rem]">
+                            <FormSelect
+                                name="provincia_id"
+                                label="Provincia"
+                                items={provincesWithAllOption.map((p) => ({
+                                    value: p.value === '' ? '' : String(p.value),
+                                    label: p.value === '' ? 'Todas las provincias' : p.label,
+                                }))}
+                                value={
+                                    provincia_id != null && String(provincia_id) !== ''
+                                        ? String(provincia_id)
+                                        : ''
+                                }
+                                multiple={false}
+                                canDeselect={false}
+                                onChange={(e) =>
+                                    handleFilterChange({ provincia_id: String(e.target.value ?? '') })
+                                }
+                                errors={undefined}
+                            />
                         </div>
-                        
+
                         <button
                             type="button"
                             onClick={ToggleReports}

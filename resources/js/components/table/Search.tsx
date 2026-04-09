@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AppIcon from "../Icons/AppIcon";
 
 interface SearchProps {
@@ -8,6 +8,8 @@ interface SearchProps {
 
 export default function Search({ initialSearchTerm, onSearch }: SearchProps) {
     const [term, setTerm] = useState(initialSearchTerm ?? '');
+    const onSearchRef = useRef(onSearch);
+    onSearchRef.current = onSearch;
 
     useEffect(() => {
         const t = term.trim();
@@ -19,10 +21,10 @@ export default function Search({ initialSearchTerm, onSearch }: SearchProps) {
         }
 
         const timeout = setTimeout(() => {
-            onSearch(t);
+            onSearchRef.current(t);
         }, 1000);
         return () => clearTimeout(timeout);
-    }, [term]);
+    }, [term, initialSearchTerm]);
 
     const deleteSearch = () => setTerm('');
 

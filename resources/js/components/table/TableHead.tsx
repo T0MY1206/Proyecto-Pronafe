@@ -1,5 +1,4 @@
 import {Link} from "@inertiajs/react";
-import {getUrlPaginate} from "@/lib/functions";
 
 interface TableHeadProps {
     head: TableHeadOption[];

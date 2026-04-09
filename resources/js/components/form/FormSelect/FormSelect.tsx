@@ -14,6 +14,7 @@ interface FormSelectProps {
   onChange: ChangeSelectEvent;
   errors: Record<string, string> | undefined;
   disabled?: boolean;
+  /** Clases en el contenedor externo (ancho responsive, etc.). */
   className?: string;
 }
 
@@ -25,7 +26,7 @@ function getValue(items: SelectItem[], value: string | number | null, multiple: 
     // si value viene como string con múltiples valores separados, adaptar acá si hace falta
     return items.filter((x) => String(value).includes(String(x.value))) ?? [];
   }
-  return items.find((x) => x.value === value) ?? null;
+  return items.find((x) => String(x.value) === String(value)) ?? null;
 }
 
 export default function FormSelect({
@@ -39,6 +40,7 @@ export default function FormSelect({
   onChange,
   errors,
   disabled = false,
+  className = "",
 }: FormSelectProps) {
   const selectRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -178,19 +180,31 @@ export default function FormSelect({
   );
 
   const onSelectFocus = useCallback(
-    (event: React.FocusEvent<HTMLElement>) => {
+    (_event: React.FocusEvent<HTMLElement>) => {
       if (disabled) return;
+      /* No abrir al enfocar (p. ej. Tab): solo clic o teclado explícito. */
+    },
+    [disabled]
+  );
 
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        if (!isClicked) {
+  const onSelectKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (disabled) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsOpen(false);
+        resetSearch();
+        return;
+      }
+      if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+        if (!isOpen) {
+          e.preventDefault();
           setIsOpen(true);
-          if (!isOpen && event.relatedTarget !== searchRef.current) {
-            setTimeout(() => searchRef.current?.focus(), 10);
-          }
+          setTimeout(() => searchRef.current?.focus(), 0);
         }
       }
     },
-    [disabled, isClicked, isOpen]
+    [disabled, isOpen, resetSearch]
   );
 
   const onSelectBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
@@ -243,7 +257,7 @@ export default function FormSelect({
   }, [isOpen, handleClickOutside]);
 
   return (
-    <div ref={selectRef}>
+    <div ref={selectRef} className={className}>
       <FormLabel name={name} label={label} />
 
       <fieldset disabled={disabled} className="w-full">
@@ -251,6 +265,10 @@ export default function FormSelect({
           onMouseDown={onMouseEvent}
           onMouseUp={onMouseEvent}
           onFocus={onSelectFocus}
+          onKeyDown={onSelectKeyDown}
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
           className={`ts-control tom-select w-full ${multiple ? "multi plugin-remove_button" : "single plugin-dropdown_input"} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
           tabIndex={disabled ? -1 : 0}
         >
@@ -268,8 +286,7 @@ export default function FormSelect({
           </div>
 
           <div
-            className="ts-dropdown multi tom-select w-full plugin-dropdown_input plugin-remove_button"
-            style={{ display: isOpen ? "block" : "none" }}
+            className={`ts-dropdown multi tom-select w-full plugin-dropdown_input plugin-remove_button ${isOpen ? "is-open" : ""}`}
           >
             <div className="dropdown-input-wrap">
               <input

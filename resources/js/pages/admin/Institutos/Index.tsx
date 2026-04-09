@@ -3,11 +3,10 @@ import ConfirmModal from '@/components/modals/ConfirmModal';
 import InstitutoDetailsModal from '@/components/modals/InstitutoDetailsModal';
 import Table from '@/components/table/Table';
 import { AdminLayout } from '@/layouts/AdminLayout';
-import { number } from '@/lib/validationFunctions';
 import { Instituto, Provincia, TipoInstituto } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import { useCallback } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { useState, useCallback, useMemo } from 'react';
+import FormSelect from '@/components/form/FormSelect/FormSelect';
 
 interface IndexProps {
     institutos: { data: Instituto[];[key: string]: any };
@@ -33,7 +32,7 @@ export default function Index({ institutos, tiposInstituto, provincias, filters,
     const [institutoToDeactivate, setInstitutoToDeactivate] = useState<Instituto | null>(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedInstituto, setSelectedInstituto] = useState<Instituto | null>(null);
-    const [currentPerPage, setCurrentPerPage] = useState(null);
+    const [currentPerPage, setCurrentPerPage] = useState<number | null>(institutos.per_page ?? null);
 
     const ambito_gestion = filters?.ambito_gestion
     const provincia_id = filters?.provincia_id
@@ -82,6 +81,7 @@ export default function Index({ institutos, tiposInstituto, provincias, filters,
     }, [filters, currentPerPage]);
 
     const handlePerPageChange = useCallback((newPerPage: number) => {
+        setCurrentPerPage(newPerPage);
         router.get(route('admin.institutos.index'), {
             ...filters,
             page: 1, // Reset to first page
@@ -130,14 +130,30 @@ export default function Index({ institutos, tiposInstituto, provincias, filters,
         })
     };
 
+    const provinciaItems = useMemo(
+        () => [
+            { value: '' as const, label: 'Todas las provincias' },
+            ...(provincias?.map((p) => ({ value: String(p.id), label: p.descripcion })) ?? []),
+        ],
+        [provincias],
+    );
+
+    const tipoInstitutoItems = useMemo(
+        () => [
+            { value: '' as const, label: 'Todos los tipos' },
+            ...(tiposInstituto?.map((t) => ({ value: String(t.id), label: t.descripcion })) ?? []),
+        ],
+        [tiposInstituto],
+    );
+
     return (
         <AdminLayout>
             <Head title="Institutos" />
             <AppLayoutTitle title="Institutos" />
 
-            <div className="grid grid-cols-12 gap-6 mt-2">
-                <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-                    <div className="flex gap-2 mr-4">
+            <div className="mt-4 w-full">
+                <div className="intro-y flex w-full flex-col gap-4 xl:flex-row xl:flex-wrap xl:items-end">
+                    <div className="flex flex-wrap gap-2">
                         <button
                             type="button"
                             className={`btn btn-primary shadow-md mr-2 focus:outline-none focus:ring-0 ${!ambito_gestion ? 'bg-gray-700 border-gray-600' : 'border-transparent'}`}
@@ -163,32 +179,42 @@ export default function Index({ institutos, tiposInstituto, provincias, filters,
                         </button>
                     </div>
 
-                    <div className="flex gap-4 ml-auto">
-                        <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Provincia</label>
-                            <select className="form-control w-full" value={provincia_id} onChange={(e) => handleProvincia(e.target.value)}>
-                                <option value="">Todas las provincias</option>
-                                {provincias?.map((provincia) => (
-                                    <option key={provincia.id} value={provincia.id}>
-                                        {provincia.descripcion}
-                                    </option>
-                                ))}
-                            </select>
+                    <div className="grid w-full gap-4 sm:grid-cols-2 xl:ml-auto xl:w-auto xl:max-w-4xl xl:grid-cols-[1fr_1fr_auto] xl:items-end">
+                        <div className="min-w-0 sm:min-w-[12rem]">
+                            <FormSelect
+                                name="provincia_id"
+                                label="Provincia"
+                                items={provinciaItems}
+                                value={
+                                    provincia_id != null && String(provincia_id) !== ''
+                                        ? String(provincia_id)
+                                        : ''
+                                }
+                                multiple={false}
+                                canDeselect={false}
+                                onChange={(e) => handleProvincia(String(e.target.value ?? ''))}
+                                errors={undefined}
+                            />
                         </div>
 
-                        <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Tipo de Instituto</label>
-                            <select className="form-control w-full" value={tipo_instituto_id} onChange={(e) => handleTipoInstituto(e.target.value)}>
-                                <option value="">Todos los tipos</option>
-                                {tiposInstituto?.map((tipo) => (
-                                    <option key={tipo.id} value={tipo.id}>
-                                        {tipo.descripcion}
-                                    </option>
-                                ))}
-                            </select>
+                        <div className="min-w-0 sm:min-w-[12rem]">
+                            <FormSelect
+                                name="tipo_instituto_id"
+                                label="Tipo de instituto"
+                                items={tipoInstitutoItems}
+                                value={
+                                    tipo_instituto_id != null && String(tipo_instituto_id) !== ''
+                                        ? String(tipo_instituto_id)
+                                        : ''
+                                }
+                                multiple={false}
+                                canDeselect={false}
+                                onChange={(e) => handleTipoInstituto(String(e.target.value ?? ''))}
+                                errors={undefined}
+                            />
                         </div>
 
-                        <div className="flex items-end">
+                        <div className="flex items-end pb-0.5">
                             <button type="button" onClick={clearFilters} className="btn btn-outline-secondary shadow-md mr-2">
                                 Limpiar Filtros
                             </button>

@@ -1,9 +1,401 @@
+/**
+ * Estilos globales PRONAFE (Tailwind v4).
+ * Las clases tipo .btn, .form-control, .side-nav, etc. reemplazan el CSS del template Tinker
+ * eliminado en la migración; mantenerlas alineadas con los className del árbol resources/js.
+ */
 @import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
 
+/* Raíz Inertia: sin altura mínima forzada (evita caja fantasma de 100vh). */
+#app {
+    @apply block min-h-0;
+}
+
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --color-brand-50: #eef6ff;
+    --color-brand-100: #d9eaff;
+    --color-brand-600: #1e5bb8;
+    --color-brand-700: #184a96;
+    --color-dark-1: #0f172a;
+    --color-dark-3: #475569;
+    --color-dark-5: #334155;
+    --color-dark-6: #1e293b;
+    --color-darkmode-400: #94a3b8;
+    --color-primary-3: #b91c1c;
+    --radius-brand: 0.75rem;
+}
+
+/* Login: fondo legible sin el CSS del template Tinker. */
+body.login {
+    @apply min-h-screen bg-slate-200/80 text-slate-900 antialiased;
+}
+
+/*
+ * Área autenticada: el color de “página” va en html (min. alto = viewport) para que no quede
+ * un bloque vacío bajo el contenido. body sigue al alto real del contenido.
+ */
+html {
+    @apply min-h-[100dvh] bg-slate-400/35;
+}
+
+body.main {
+    @apply bg-slate-400/35 text-slate-900 antialiased;
+}
+
+@layer components {
+    /* --- Utilidades de animación / bloque (ex Tinker) --- */
+    .intro-x,
+    .intro-y {
+        @apply block;
+    }
+
+    /* Nombre de clase legacy con guión inicial (Breadcrumb). */
+    .\-intro-x {
+        @apply block;
+    }
+
+    /* --- Botones (Bootstrap-like usados en todo el proyecto) --- */
+    .btn {
+        @apply inline-flex cursor-pointer items-center justify-center rounded-xl border border-transparent px-4 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/50 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .btn-primary {
+        @apply bg-brand-600 text-white hover:bg-brand-700;
+    }
+
+    .btn-secondary {
+        @apply border-slate-300 bg-slate-200 text-slate-800 hover:bg-slate-300;
+    }
+
+    .btn-outline-secondary {
+        @apply border border-slate-400/60 bg-slate-200/80 text-slate-800 hover:bg-slate-300/70;
+    }
+
+    .btn-outline-warning {
+        @apply border border-amber-500 bg-slate-200/80 text-amber-900 hover:bg-amber-50;
+    }
+
+    .btn-danger {
+        @apply border-red-800 bg-red-600 text-white hover:bg-red-700;
+    }
+
+    .btn-success {
+        @apply border-emerald-800 bg-emerald-600 text-white hover:bg-emerald-700;
+    }
+
+    .btn-lg {
+        @apply px-8 py-3 text-base;
+    }
+
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs;
+    }
+
+    /* --- Formularios --- */
+    .form-control {
+        @apply w-full rounded-xl border border-slate-400/70 bg-slate-200/90 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition duration-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25;
+    }
+
+    select.form-control {
+        @apply cursor-pointer;
+    }
+
+    .login__input {
+        @apply rounded-xl border-slate-300;
+    }
+
+    .input-form {
+        @apply mb-4 block w-full;
+    }
+
+    .form-inline {
+        @apply inline-flex items-center gap-2;
+    }
+
+    .form-label {
+        @apply text-sm font-medium text-slate-700;
+    }
+
+    .has-error {
+        @apply border-red-500 focus:border-red-500 focus:ring-red-500/30;
+    }
+
+    .pristine-error {
+        @apply text-sm;
+    }
+
+    .text-primary-3 {
+        @apply text-red-600;
+    }
+
+    .placeholder-theme-13::placeholder {
+        @apply text-slate-400;
+    }
+
+    /* Sidebar fuera del flujo en md+ → la columna principal ya no se estira a 100vh por el menú. */
+    .side-nav {
+        @apply hidden w-60 shrink-0 flex-col border-r border-slate-400/45 bg-slate-300/50 md:flex;
+        @apply md:fixed md:left-0 md:top-0 md:z-40 md:h-dvh md:max-h-dvh md:overflow-y-auto;
+    }
+
+    .side-nav > ul {
+        @apply list-none space-y-0.5 px-2 pb-6;
+    }
+
+    .side-nav__devider {
+        @apply mx-2 my-3 h-px border-0 bg-slate-200;
+    }
+
+    .side-nav li > ul {
+        @apply hidden;
+    }
+
+    .side-nav li > ul.side-menu__sub-open {
+        @apply ml-3 block space-y-0 border-l-2 border-slate-100 py-1 pl-3;
+    }
+
+    .side-menu {
+        @apply flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition-colors duration-200 ease-out hover:bg-slate-200/70 hover:text-slate-900;
+    }
+
+    .side-menu--active {
+        @apply bg-brand-50 text-brand-700;
+    }
+
+    .side-menu__icon {
+        @apply flex h-5 w-5 shrink-0 items-center justify-center text-slate-500;
+    }
+
+    .side-menu--active .side-menu__icon {
+        @apply text-brand-600;
+    }
+
+    .side-menu__title {
+        @apply flex flex-1 items-center justify-between gap-2;
+    }
+
+    .side-menu__sub-icon {
+        @apply flex h-4 w-4 shrink-0 text-slate-400;
+    }
+
+    /* Columna principal: ancho completo; en desktop deja hueco para .side-nav fijo (pl-60 en layout). */
+    .content {
+        @apply min-h-0 w-full min-w-0 overflow-x-clip overflow-y-visible bg-transparent pb-6 pt-2;
+    }
+
+    .top-bar {
+        @apply sticky top-0 z-20 mb-2 flex w-full flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-400/45 bg-slate-300/55 px-4 py-3 shadow-md shadow-slate-600/10 backdrop-blur-md transition-shadow duration-200 ease-out;
+    }
+
+    .breadcrumb {
+        @apply flex flex-wrap items-center gap-1 text-sm text-slate-600;
+    }
+
+    .breadcrumb--active {
+        @apply font-semibold text-slate-900;
+    }
+
+    .breadcrumb__icon {
+        @apply mx-1 h-4 w-4 shrink-0 text-slate-400;
+    }
+
+    .btn-user.dropdown {
+        @apply shrink-0;
+    }
+
+    /* --- Menú móvil (barra superior) --- */
+    .mobile-menu {
+        @apply md:hidden;
+    }
+
+    .mobile-menu-bar {
+        @apply flex items-center justify-between border-b border-slate-400/40 bg-slate-300/60 px-4 py-3 backdrop-blur-sm;
+    }
+
+    .mobile-menu-box {
+        @apply list-none border-b border-slate-400/40 bg-slate-200/90;
+    }
+
+    .menu__devider {
+        @apply mx-4 my-3 h-px bg-slate-200;
+    }
+
+    .mobile-menu-box li > ul {
+        @apply hidden;
+    }
+
+    .mobile-menu-box li > ul.menu__sub-open {
+        @apply block border-l-2 border-slate-100 py-1 pl-4;
+    }
+
+    .menu {
+        @apply flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50;
+    }
+
+    .menu--active {
+        @apply bg-brand-50 text-brand-700;
+    }
+
+    .menu__icon {
+        @apply flex h-5 w-5 text-slate-500;
+    }
+
+    .menu--active .menu__icon {
+        @apply text-brand-600;
+    }
+
+    .menu__title {
+        @apply flex flex-1 items-center justify-between;
+    }
+
+    .menu__sub-icon {
+        @apply h-4 w-4 text-slate-400;
+    }
+
+    .notification {
+        @apply inline-flex text-slate-500 hover:text-slate-800;
+    }
+
+    /* --- Dropdowns (usuario anclado al TopBar / notificaciones con posición legacy) --- */
+    .dropdown-menu {
+        @apply z-50 min-w-[14rem] rounded-xl border border-slate-400/55 bg-slate-200 py-0 shadow-xl shadow-slate-600/20;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-6px) scale(0.97);
+        transform-origin: top right;
+        transition:
+            opacity 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .dropdown-menu.show {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .dropdown-menu--anchored {
+        @apply absolute right-0 top-full mt-2;
+    }
+
+    .dropdown-menu__content.box,
+    .box {
+        @apply rounded-xl bg-slate-200 shadow-none;
+    }
+
+    .notification-content__title {
+        @apply border-b border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-800;
+    }
+
+    /* --- Tablas tipo “report” --- */
+    .table.table-report {
+        @apply w-full min-w-[640px] border-collapse text-left text-sm text-slate-800;
+    }
+
+    .table-report th {
+        @apply whitespace-nowrap border-b-2 border-slate-300/80 bg-slate-300/60 px-3 py-3 font-semibold text-slate-800;
+    }
+
+    .table-report td {
+        @apply border-b border-slate-300/50 px-3 py-2.5 align-middle;
+    }
+
+    .table-report__action {
+        @apply w-px whitespace-nowrap px-3 py-2 text-right;
+    }
+
+    /* --- Paginación --- */
+    .pagination {
+        @apply mr-4 flex list-none flex-wrap items-center gap-1 p-0;
+    }
+
+    .pagination__link {
+        @apply flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-slate-400/50 bg-slate-200/90 px-2 py-1 text-sm font-medium text-slate-800 transition duration-200 hover:border-brand-600 hover:bg-brand-50 hover:text-brand-700;
+    }
+
+    .pagination__link--active {
+        @apply border-brand-600 bg-brand-600 text-white hover:bg-brand-700;
+    }
+
+    .form-select {
+        @apply rounded-xl border border-slate-400/70 bg-slate-200/90 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition duration-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25;
+    }
+
+    /* Ancho legacy (~100px) usado en botones de formularios. */
+    .w-25 {
+        @apply min-w-[6.25rem];
+    }
+
+    /* --- Botones / inputs de aplicación (Tailwind v4) --- */
+    .app-btn {
+        @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/60;
+    }
+
+    .app-btn-primary {
+        @apply inline-flex items-center justify-center rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/60;
+    }
+
+    .app-btn-secondary {
+        @apply inline-flex items-center justify-center rounded-xl border border-slate-400/60 bg-slate-200/90 px-4 py-2 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:bg-slate-300/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/60;
+    }
+
+    .app-input {
+        @apply w-full rounded-xl border border-slate-400/70 bg-slate-200/90 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/30;
+    }
+
+    /* FormSelect: trigger y lista alineados al mismo ancho (absolute bajo el control) */
+    .tom-select.ts-control {
+        @apply relative w-full;
+    }
+
+    .tom-select .items.ts-input {
+        @apply flex min-h-[2.75rem] cursor-pointer flex-wrap items-center gap-1 rounded-xl border border-slate-400/70 bg-slate-200/90 px-2 py-1.5 shadow-sm transition-[border-color,box-shadow,background-color] duration-200 ease-out;
+    }
+
+    .tom-select .items.ts-input.dropdown-active {
+        @apply border-brand-600 bg-slate-100 shadow-md ring-2 ring-brand-600/20;
+    }
+
+    .tom-select .ts-dropdown {
+        @apply absolute left-0 right-0 top-full z-40 mt-1 overflow-hidden rounded-xl border border-slate-400/60 bg-slate-200 shadow-xl shadow-slate-600/15;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-6px) scale(0.985);
+        transform-origin: top center;
+        transition:
+            opacity 0.2s ease,
+            transform 0.2s ease,
+            visibility 0.2s;
+        pointer-events: none;
+    }
+
+    .tom-select .ts-dropdown.is-open {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    .tom-select .dropdown-input {
+        @apply w-full border-0 border-b border-slate-400/50 bg-slate-300/40 px-3 py-2.5 text-sm text-slate-900 outline-none transition-colors duration-150 placeholder:text-slate-500 focus:bg-slate-200/90;
+    }
+
+    .tom-select .ts-dropdown-content .option {
+        @apply cursor-pointer px-3 py-2.5 text-sm text-slate-900 transition-colors duration-150 ease-out;
+    }
+
+    .tom-select .ts-dropdown-content .option:hover {
+        @apply bg-slate-300/55;
+    }
+
+    .tom-select .ts-dropdown-content .option.active {
+        @apply bg-brand-100 font-medium text-brand-700;
+    }
+}
 
 /* Estilos para formularios deshabilitados */
 fieldset:disabled {

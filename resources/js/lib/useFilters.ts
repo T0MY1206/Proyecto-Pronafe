@@ -8,7 +8,7 @@ export function applyFilters(
     newFilters: Record<string, any>
 ) {
     // Construye la URL inicial con los filtros actuales
-    let newUrl = getUrlPaginate(
+    const newUrl = getUrlPaginate(
         baseUrl,
         currentFilters,
         currentFilters.limit ?? 10,

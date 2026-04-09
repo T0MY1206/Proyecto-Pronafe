@@ -29,7 +29,7 @@ interface ExpandedData {
             anio: number;
         };
         id: number; 
-        estado_id;
+        estado_id: number;
     }
 }
 
@@ -41,36 +41,34 @@ interface ExpandedRowFormProps {
     onAceptar?: (data: ExpandedData) => Promise<void>;
     onRechazar?: (data: ExpandedData) => Promise<void>;
     hideButtons?: boolean;
+    loading?: boolean;
 }
 
 const ExpandedRowForm: React.FC<ExpandedRowFormProps> = ({
-    isOpen = false,
+    isOpen: _isOpen = false,
     onClose,
     data,
     showActions = false,
-    onRechazar,
 }) => {
-    console.log(data)
+    const { props: { errors } } = usePage();
+
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [isRejectionFormOpen, setIsRejectionFormOpen] = useState(false);
+    const [actionToConfirm, setActionToConfirm] = useState<string | null>(null);
+    const [rejectionReason, setRejectionReason] = useState('');
+    const [hideButtons, setHideButtons] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!data?.data) return;
+        setHideButtons(data.data.estado_id !== 2);
+    }, [data]);
+
     if (!data || !data.data || !data.data.instituto) {
         return <div>Cargando...</div>;
     }
 
-    const { props: { errors } } = usePage(); // Para manejar errores de Inertia/Laravel
-    
-    // Estados internos para la secuencia de 3 modales
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const [isRejectionFormOpen, setIsRejectionFormOpen] = useState(false);
-    const [actionToConfirm, setActionToConfirm] = useState(null); // 'Aceptar' o 'Rechazar'
-    const [rejectionReason, setRejectionReason] = useState('');
-    const [hideButtons, setHideButtons] = useState<boolean>(false);
-
-
-    useEffect(() => {
-        setHideButtons(data.data.estado_id !== 2)
-    }, [data])
-
     // Función para iniciar la confirmación
-    const handleActionClick = (action) => {
+    const handleActionClick = (action: string) => {
         setActionToConfirm(action);
         setIsConfirmOpen(true); // Abre Modal 2
     };
@@ -89,7 +87,7 @@ const ExpandedRowForm: React.FC<ExpandedRowFormProps> = ({
     };
 
     // Lógica de Confirmación (Modal 2)
-    const handleFinalConfirmation = (confirmed) => {
+    const handleFinalConfirmation = (confirmed: boolean) => {
         setIsConfirmOpen(false); // Cierra Modal 2
 
         if (!confirmed) {

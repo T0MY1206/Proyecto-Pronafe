@@ -22,7 +22,15 @@ export default [
             'react/prop-types': 'off',
             'react/no-unescaped-entities': 'off',
             'react-hooks/exhaustive-deps': 'off',
-            "@typescript-eslint/no-explicit-any": "off"
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                },
+            ],
         },
         settings: {
             react: {
@@ -36,11 +44,19 @@ export default [
         },
         rules: {
             'react-hooks/rules-of-hooks': 'error',
-            'react-hooks/exhaustive-deps': 'warn',
+            'react-hooks/exhaustive-deps': 'error',
         },
     },
     {
-        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js'],
+        files: ['**/*.test.ts', '**/*.test.tsx', 'resources/js/test/setup.ts'],
+        languageOptions: {
+            globals: {
+                ...globals.vitest,
+            },
+        },
+    },
+    {
+        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js', 'resources/js/ziggy.js'],
     },
     prettier, // Turn off all rules that might conflict with Prettier
 ];

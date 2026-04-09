@@ -4,20 +4,21 @@ namespace App\Http\Controllers\Supervisor;
 
 use App\Constants\Estados;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Supervisor;
+use App\Services\SupervisorDatoEstadoService;
 use App\Models\Actualizacion;
 use App\Models\Provincia;
 use App\Models\Dato;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\Mail\DatoRechazadoMail;
 
 class ActualizacionesController extends Controller
 {
+    public function __construct(private readonly SupervisorDatoEstadoService $supervisorDatoEstadoService)
+    {
+    }
+
     public function index (Request $request)
     {   
         $todosLosAnios= Actualizacion::TodosLosAnios();
@@ -77,42 +78,8 @@ class ActualizacionesController extends Controller
 
     public function updateEstado(Request $request, $datoId, $estado)
     {
-        $dato = Dato::findOrFail($datoId); 
-        $motivoRechazo = $request->input('motivo_rechazo', ' ');
-
-        // Obtener email: primero del parámetro, luego del dato, luego del archivo
-        $email = $this->obtenerEmailParaEnvio($request, $datoId);
-
-        if ($estado == Estados::RECHAZADO) {
-            $request->validate(['motivo_rechazo' => 'required|string|max:1000']);
-            
-            if ($email) {
-                try {
-                    Mail::to($email)->send(new DatoRechazadoMail(
-                        $dato, 
-                        $motivoRechazo,
-                        $request->user()
-                    ));
-
-                    Log::info('Email de rechazo enviado', [
-                        'dato_id' => $datoId,
-                        'email' => $email
-                    ]);
-
-                } catch (\Exception $e) {
-                    Log::error("Error al enviar email de rechazo para Dato #{$datoId}: " . $e->getMessage());
-                }
-            } else {
-                Log::warning("No se pudo obtener email para envío de rechazo", [
-                    'dato_id' => $datoId
-                ]);
-            }
-        }
-        
-        $idNumerico = (int) $datoId; 
-        $newEstadoId = (int) $estado; 
-        $supervisorId = $request->user()->id; // ID del supervisor que está aprobando/rechazando
-        $success = Dato::changeEstado($idNumerico, $newEstadoId, $motivoRechazo, $supervisorId);
+        $newEstadoId = (int) $estado;
+        $success = $this->supervisorDatoEstadoService->updateEstado($request, (int) $datoId, $newEstadoId);
 
         if ($success) {
             if($newEstadoId == Estados::APROBADO)
@@ -124,87 +91,5 @@ class ActualizacionesController extends Controller
         } else {
             return redirect()->back()->with($request->session()->flash('toast', ['type' => 'error', 'text' => "Error al actualizar el estado o dato no encontrado."]));
         }
-    }
-
-    /**
-     * Obtener email para envío siguiendo este orden de prioridad:
-     * 1. Email del parámetro del request (si viene)
-     * 2. Según EMAIL_SOURCE del .env:
-     *    - Si es 'file' o 'test': usar primer email del archivo emails_prueba.txt
-     *    - Si no (o 'database'): usar email del dato desde la base de datos
-     * 
-     * Esta lógica es consistente con ActualizacionesController de Admin
-     * 
-     * @param Request $request
-     * @param int $datoId
-     * @return string|null
-     */
-    private function obtenerEmailParaEnvio(Request $request, $datoId)
-    {
-        // 1. Intentar obtener del parámetro del request (prioridad)
-        $email = $request->input('email');
-        if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Log::info('Email obtenido del parámetro del request', ['email' => $email]);
-            return $email;
-        }
-
-        // 2. Determinar fuente de emails según configuración EMAIL_SOURCE del .env
-        // Comportamiento igual al Admin/ActualizacionesController::enviarNotificacionesInstitutos()
-        $emailSource = env('EMAIL_SOURCE', 'database');
-        
-        if ($emailSource === 'file' || $emailSource === 'test') {
-            // Usar archivo emails_prueba.txt (modo prueba/testing)
-            $email = $this->obtenerEmailDesdeArchivo();
-            if ($email) {
-                Log::info('Email obtenido del archivo de prueba (EMAIL_SOURCE=' . $emailSource . ')', [
-                    'email' => $email,
-                    'email_source' => $emailSource
-                ]);
-                return $email;
-            }
-        } else {
-            // Usar base de datos (comportamiento por defecto)
-            $email = Dato::getEmailForData($datoId);
-            if ($email) {
-                Log::info('Email obtenido de la base de datos (EMAIL_SOURCE=' . $emailSource . ')', [
-                    'email' => $email,
-                    'dato_id' => $datoId,
-                    'email_source' => $emailSource
-                ]);
-                return $email;
-            }
-        }
-
-        Log::warning('No se pudo obtener email para envío', [
-            'dato_id' => $datoId,
-            'email_source' => $emailSource
-        ]);
-
-        return null;
-    }
-
-    /**
-     * Obtener el primer email válido desde el archivo emails_prueba.txt
-     */
-    private function obtenerEmailDesdeArchivo()
-    {
-        $archivoPath = base_path('emails_prueba.txt');
-        
-        if (!file_exists($archivoPath)) {
-            Log::warning('Archivo emails_prueba.txt no encontrado');
-            return null;
-        }
-        
-        $emails = file($archivoPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        
-        foreach ($emails as $email) {
-            $email = trim($email);
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return $email;
-            }
-        }
-        
-        Log::warning('No se encontraron emails válidos en el archivo emails_prueba.txt');
-        return null;
     }
 }

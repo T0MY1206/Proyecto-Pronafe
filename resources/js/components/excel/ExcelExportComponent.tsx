@@ -1,10 +1,5 @@
 import { useState } from 'react';
-import type { 
-    ExcelExportComponentProps, 
-    ExportConfig, 
-    PeriodoActual, 
-    Provincia 
-} from '@/types';
+import type { ExcelExportComponentProps } from '@/types';
 
 export default function ExcelExportComponent({
     exportType,
@@ -39,7 +34,7 @@ export default function ExcelExportComponent({
 
         // Estrategia 3: Token desde cookies
         const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
+        for (const cookie of cookies) {
             const [name, value] = cookie.trim().split('=');
             if (name === 'XSRF-TOKEN') {
                 csrfToken = decodeURIComponent(value);
@@ -136,7 +131,7 @@ export default function ExcelExportComponent({
         
         try {
             // Obtener el token CSRF con múltiples estrategias
-            let csrfToken = await getCSRFToken();
+            const csrfToken = await getCSRFToken();
             
             if (!csrfToken) {
                 const errorMsg = 'No se pudo obtener el token CSRF. Por favor, recarga la página e intenta nuevamente.';

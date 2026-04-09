@@ -1,14 +1,11 @@
 import { useContextMenu } from "@/hooks/useContextMenu";
 import AppMenuNotificationItem from "./AppMenuNotificationItem";
-import { usePage } from "@inertiajs/react";
 
 interface AppMenuNotificationsProps { 
     show: boolean, 
     setShow: (show: boolean) => void }
 
 export default function ({ show, setShow }: AppMenuNotificationsProps) {
-    const { props } = usePage();
-    
     // Detectar el rol del usuario basándose en la URL o props
     const getUserRole = () => {
         const currentUrl = window.location.pathname;

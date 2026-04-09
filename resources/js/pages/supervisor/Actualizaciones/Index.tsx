@@ -3,12 +3,13 @@ import AppLayoutTitle from "@/components/layouts/AppLayoutTitle";
 import Search from "@/components/table/Search";
 import Table from "@/components/table/Table";
 import Tab from "@/components/Filters/Tab";
-import { usePage, Head, router } from '@inertiajs/react';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { useState, useEffect, useCallback } from 'react';
 import Target from "@/components/cards/Traget";
 import AppIcon from "@/components/Icons/AppIcon";
 import CakeGraphics, { ChartDataItem } from "@/components/charts/CakeChart";
 import ExpandedActualizacionForm from "@/components/table/Custom/ExpandedActualizacionForm";
+import FormSelect from "@/components/form/FormSelect/FormSelect";
 import axios from 'axios';
 interface Anio {
     value: string;
@@ -44,7 +45,7 @@ interface UpdatesPagePropsDirecSuper {
     
 }
 
-export default function Updates({ user, allYears, nombreProvincia, initialData, options }: UpdatesPagePropsDirecSuper) {
+export default function Updates({ user: _user, allYears, nombreProvincia, initialData, options: _options }: UpdatesPagePropsDirecSuper) {
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [estado, setEstado] = useState<number | string>(1);
     const [currentSelectedYear, setCurrentSelectedYear] = useState(allYears[0].value);
@@ -102,7 +103,7 @@ export default function Updates({ user, allYears, nombreProvincia, initialData, 
     
     useEffect(() => {
         handleFilterChange(currentSelectedYear, currentGestionType, searchTerm, estado);
-    }, [currentSelectedYear, currentGestionType, searchTerm, handleFilterChange, currentPage, currentperPage]);
+    }, [currentSelectedYear, currentGestionType, searchTerm, handleFilterChange, currentPage, currentperPage, estado]);
 
     const handlePageChange = useCallback((page: number) => {
         setCurrentPage(page);
@@ -172,23 +173,22 @@ export default function Updates({ user, allYears, nombreProvincia, initialData, 
             <Head>
                 <title>Actualizacion</title>
             </Head>
-            <div className="rounded-lg m-2">
-                <div className="flex items-end gap-4 w-full text-base">
+            <div className="m-2 w-full">
+                <div className="flex w-full flex-col gap-4 text-base sm:flex-row sm:flex-wrap sm:items-end">
                     <AppLayoutTitle title="Actualización de datos" />
-                    <select
-                        id="anioSelect"
-                        name="anioSelect"
-                        value={currentSelectedYear}
-                        onChange={e => handleFilterChange(e.target.value, null, '', estado)}
-                        className="block w-auto min-w-[100px] px-3 py-2 border border-gray-300 rounded-lg shadow-lg bg-white focus:outline-none focus:ring-blue-950/93 focus:border-blue-950/93 sm:text-lg cursor-pointer"
-                    >
-                        {allYears.map(yearItem => (
-                            <option key={yearItem.value} value={yearItem.value}>
-                                {yearItem.label}
-                            </option>
-                        ))}
-                    </select>
-                    <h1 className='text-lg font-bold'>{nombreProvincia}</h1>
+                    <div className="w-full min-w-[10rem] sm:w-48">
+                        <FormSelect
+                            name="anio"
+                            label="Año"
+                            items={allYears.map((y) => ({ value: y.value, label: y.label }))}
+                            value={currentSelectedYear}
+                            multiple={false}
+                            canDeselect={false}
+                            onChange={(e) => handleFilterChange(String(e.target.value), null, '', estado)}
+                            errors={undefined}
+                        />
+                    </div>
+                    <h1 className="text-lg font-bold text-slate-800">{nombreProvincia}</h1>
                 </div>
             </div>
             {/* FILTROS */}

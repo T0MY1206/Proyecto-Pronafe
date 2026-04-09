@@ -1,7 +1,6 @@
 import { Instituto } from '@/types';
 import { useEffect } from 'react';
 import { router } from '@inertiajs/react';
-import FormularioDatos from '@/components/forms/FormularioDatos';
 
 interface InstitutoDetailsModalProps {
     isOpen: boolean;
@@ -10,15 +9,15 @@ interface InstitutoDetailsModalProps {
 }
 
 export default function InstitutoDetailsModal({ isOpen, onClose, instituto }: InstitutoDetailsModalProps) {
-    if (!instituto) return null;
-
     const handleEdit = () => {
+        if (!instituto) return;
         router.get(route('admin.institutos.edit', {
             instituto: instituto.cue
         }))
     }
 
     useEffect(() => {
+        if (!instituto) return;
         if (isOpen) {
             // Ocultar la navegación cuando el modal está abierto
             const topBar = document.querySelector('.top-bar');
@@ -55,7 +54,9 @@ export default function InstitutoDetailsModal({ isOpen, onClose, instituto }: In
                 (sideNav as HTMLElement).style.display = '';
             }
         };
-    }, [isOpen]);
+    }, [isOpen, instituto]);
+
+    if (!instituto) return null;
 
     if (!isOpen) return null;
 
@@ -69,26 +70,6 @@ export default function InstitutoDetailsModal({ isOpen, onClose, instituto }: In
             default:
                 return 'No especificado';
         }
-    };
-
-    // Preparar datos para el formulario
-    const formularioData = {
-        instituto: {
-            cue: instituto.cue,
-            nombre: instituto.nombre,
-            direccion: instituto.direccion,
-            localidad: instituto.localidad?.descripcion,
-            codigo_postal: instituto.codigo_postal,
-            telefono: instituto.telefono,
-            email: instituto.email,
-            tipo_instituto: instituto.tipo_instituto
-        },
-        autoridadInstitucional: {},
-        autoridadCarrera: {},
-        datos: {},
-        anio: new Date().getFullYear(),
-        cargosInstitucionales: [],
-        cargosCarrera: []
     };
 
     return (

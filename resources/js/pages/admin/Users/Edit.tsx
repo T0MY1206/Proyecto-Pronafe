@@ -17,7 +17,7 @@ interface Props {
     roles: Role[];
 }
 
-export default function Edit({ user, provincias, roles }: Props) {
+export default function Edit({ user, provincias, roles: _roles }: Props) {
     const { data, setData, reset, put, processing, errors } = useForm({
         id: user.id,
         name: user.name,

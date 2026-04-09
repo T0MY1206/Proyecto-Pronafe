@@ -1,5 +1,5 @@
 import { BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { TopBar } from './components/TopBar';
@@ -74,26 +74,26 @@ export function AdminLayout({ children, breadcrumb }: AdminLayoutProps) {
     }
 
     return <>
-            <Head>
-                <link rel="stylesheet" href="/assets/css/tinker.css" />
-            </Head>
-
             <AppMobileMenu></AppMobileMenu>
 
-        <div className="flex overflow-hidden">
-            <AppMenuAdministrador></AppMenuAdministrador>
-            <div className="content ">
-                <TopBar breadcrumb={breadcrumb} onMenuOpen={openMenues}></TopBar>
-
-                    {children}
-                </div>
+        <AppMenuAdministrador />
+        <div className="content flex w-full max-w-full flex-col px-0 md:pl-60">
+            <div className="shrink-0 px-4 md:px-6 lg:px-8">
+                <TopBar
+                    breadcrumb={breadcrumb}
+                    onMenuOpen={openMenues}
+                    userMenuOpen={showMenuUsers}
+                    userMenu={
+                        <AppMenuUser show={showMenuUsers} setShow={setShowMenuUsers}>
+                            <AppMenuUserItem title="Perfil" icon="user" url="admin.profile.edit" />
+                        </AppMenuUser>
+                    }
+                />
             </div>
+            <div className="w-full min-w-0 px-4 md:px-6 lg:px-8">{children}</div>
+        </div>
 
             <ToastContainer></ToastContainer>
-
-        <AppMenuUser show={showMenuUsers} setShow={setShowMenuUsers}>
-            <AppMenuUserItem title="Perfil" icon="user" url="admin.profile.edit"></AppMenuUserItem>
-        </AppMenuUser>
 
         <AppMenuNotifications show={showMenuNotifications} setShow={setShowMenuNotifications}></AppMenuNotifications>
     </>;

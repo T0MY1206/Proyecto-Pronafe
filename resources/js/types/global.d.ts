@@ -4,9 +4,6 @@ declare global {
     const route: typeof routeFn;
 }
 
-// Importa los tipos base de Inertia
-import { PageProps as InertiaPageProps, Page } from '@inertiajs/core';
-
 // Define la estructura de tus mensajes flash
 interface FlashMessages {
     success?: string;

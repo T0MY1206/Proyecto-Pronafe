@@ -15,7 +15,7 @@ interface Props {
     localidad: Localidad[];
 }
 
-export default function Edit({ instituto, tipoInstitutos, provincias, localidad }: Props) {
+export default function Edit({ instituto, tipoInstitutos, provincias, localidad: _localidad }: Props) {
     const [departamentos, setDepartamentos] = useState([]);
     const [localidades, setLocalidades] = useState([]);
 
@@ -56,9 +56,8 @@ export default function Edit({ instituto, tipoInstitutos, provincias, localidad 
                 anio_egreso: instituto?.anio_egreso ?? '',
             },
         }));
-    }, [instituto]);
-    const provinciaId = data.provincia;
-    const departamentoId = data.departamento;
+    }, [instituto, setData]);
+
     useEffect(() => {
         async function fetchDepartamentos() {
             if (data.provincia) {
@@ -70,7 +69,7 @@ export default function Edit({ instituto, tipoInstitutos, provincias, localidad 
             }
         }
         fetchDepartamentos();
-    }, [provinciaId]);
+    }, [data.provincia]);
 
     useEffect(() => {
         async function fetchLocalidades() {
@@ -83,7 +82,7 @@ export default function Edit({ instituto, tipoInstitutos, provincias, localidad 
             }
         }
         fetchLocalidades();
-    }, [departamentoId]);
+    }, [data.departamento]);
 
     const onChange = (event: any) => {
         const { target } = event;

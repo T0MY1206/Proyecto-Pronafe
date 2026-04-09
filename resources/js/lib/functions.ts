@@ -1,5 +1,3 @@
-import { PaginationProp } from '@/types/paginate';
-
 export function hasParentClass(classNames: string[], parent: HTMLElement) {
     if (typeof classNames === 'string') {
         if (parent.classList.contains(classNames)) return true;

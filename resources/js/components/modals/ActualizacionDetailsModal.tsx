@@ -34,9 +34,8 @@ interface ActualizacionDetailsModalProps {
 }
 
 export default function ActualizacionDetailsModal({ isOpen, onClose, data }: ActualizacionDetailsModalProps) {
-    if (!data) return null;
-
     useEffect(() => {
+        if (!data) return;
         if (isOpen) {
             // Ocultar la navegación cuando el modal está abierto
             const topBar = document.querySelector('.top-bar');
@@ -73,7 +72,9 @@ export default function ActualizacionDetailsModal({ isOpen, onClose, data }: Act
                 (sideNav as HTMLElement).style.display = '';
             }
         };
-    }, [isOpen]);
+    }, [isOpen, data]);
+
+    if (!data) return null;
 
     if (!isOpen) return null;
 

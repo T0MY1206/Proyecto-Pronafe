@@ -51,10 +51,10 @@ export default function Create({ actualizaciones = [] }: Props) {
         setEditMode(false); // Al cambiar año, salir de modo edición
         setData('anio', selectedYear);
         setData('fecha_matriculados', fechaFormateada(actualizacion?.fecha_matriculados));
-        setData('fecha_1_egresados', fechaFormateada(actualizacion?.fecha_2_egresados));
+        setData('fecha_1_egresados', fechaFormateada(actualizacion?.fecha_1_egresados));
         setData('fecha_2_egresados', fechaFormateada(actualizacion?.fecha_2_egresados));
         setData('fecha_tope', fechaFormateada(actualizacion?.fecha_tope));
-    }, [selectedYear]);
+    }, [selectedYear, actualizacion, setData]);
 
     function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();

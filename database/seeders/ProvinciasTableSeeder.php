@@ -23,36 +23,42 @@ class ProvinciasTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // Verificar si ya existen provincias
-        if (DB::table('provincias')->count() === 0) {
-            $provincias = [
-                ['descripcion' => 'Buenos Aires'],
-                ['descripcion' => 'CABA'],
-                ['descripcion' => 'Catamarca'],
-                ['descripcion' => 'Chaco'],
-                ['descripcion' => 'Chubut'],
-                ['descripcion' => 'Córdoba'],
-                ['descripcion' => 'Corrientes'],
-                ['descripcion' => 'Entre Ríos'],
-                ['descripcion' => 'Formosa'],
-                ['descripcion' => 'Jujuy'],
-                ['descripcion' => 'La Pampa'],
-                ['descripcion' => 'La Rioja'],
-                ['descripcion' => 'Mendoza'],
-                ['descripcion' => 'Misiones'],
-                ['descripcion' => 'Neuquén'],
-                ['descripcion' => 'Rio Negro'],
-                ['descripcion' => 'Salta'],
-                ['descripcion' => 'San Juan'],
-                ['descripcion' => 'San Luis'],
-                ['descripcion' => 'Santa Cruz'],
-                ['descripcion' => 'Santa Fe'],
-                ['descripcion' => 'Santiago del Estero'],
-                ['descripcion' => 'Tierra del Fuego'],
-                ['descripcion' => 'Tucumán']
-            ];
+        $provincias = [
+            ['descripcion' => 'Buenos Aires'],
+            ['descripcion' => 'CABA'],
+            ['descripcion' => 'Catamarca'],
+            ['descripcion' => 'Chaco'],
+            ['descripcion' => 'Chubut'],
+            ['descripcion' => 'Córdoba'],
+            ['descripcion' => 'Corrientes'],
+            ['descripcion' => 'Entre Ríos'],
+            ['descripcion' => 'Formosa'],
+            ['descripcion' => 'Jujuy'],
+            ['descripcion' => 'La Pampa'],
+            ['descripcion' => 'La Rioja'],
+            ['descripcion' => 'Mendoza'],
+            ['descripcion' => 'Misiones'],
+            ['descripcion' => 'Neuquén'],
+            ['descripcion' => 'Rio Negro'],
+            ['descripcion' => 'Salta'],
+            ['descripcion' => 'San Juan'],
+            ['descripcion' => 'San Luis'],
+            ['descripcion' => 'Santa Cruz'],
+            ['descripcion' => 'Santa Fe'],
+            ['descripcion' => 'Santiago del Estero'],
+            ['descripcion' => 'Tierra del Fuego'],
+            ['descripcion' => 'Tucumán'],
+        ];
 
-            DB::table('provincias')->insert($provincias);
+        // Inserta solo las provincias faltantes para evitar errores cuando ya hay datos previos.
+        foreach ($provincias as $provincia) {
+            $exists = DB::table('provincias')
+                ->where('descripcion', $provincia['descripcion'])
+                ->exists();
+
+            if (!$exists) {
+                DB::table('provincias')->insert($provincia);
+            }
         }
     }
 }
