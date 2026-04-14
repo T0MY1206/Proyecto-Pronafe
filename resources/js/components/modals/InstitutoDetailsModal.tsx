@@ -73,7 +73,7 @@ export default function InstitutoDetailsModal({ isOpen, onClose, instituto }: In
     };
 
     return (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="h-full max-h-none w-full max-w-none overflow-y-auto mx-3 rounded-none bg-white shadow-xl">
                 <div className="flex items-center justify-between border-b p-6">
                     <h2 className="text-2xl font-bold text-gray-900">Detalles del Instituto</h2>

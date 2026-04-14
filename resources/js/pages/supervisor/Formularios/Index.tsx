@@ -166,7 +166,7 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
                                 <select
                                     name="estado"
                                     defaultValue={filters.estado || ''}
-                                    className="app-input max-w-xs"
+                                    className="form-control max-w-xs"
                                     onChange={(e) => {
                                         const target = e.target as HTMLSelectElement;
                                         const form = target.closest('form') || document.createElement('form');
@@ -200,7 +200,7 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
                                     name="search"
                                     defaultValue={filters.search || ''}
                                     placeholder="Buscar por nombre o CUE..."
-                                    className="app-input"
+                                    className="form-control"
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             const target = e.target as HTMLInputElement;
@@ -231,7 +231,7 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
 
             {/* Modal de confirmación */}
             {showConfirmModal && selectedFormulario && actionType && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
                         <h3 className="text-lg font-semibold mb-4">
                             {actionType === 'aprobar' ? 'Aprobar Formulario' : 'Rechazar Formulario'}
@@ -242,13 +242,13 @@ export default function Index({ formularios, estados, filters }: IndexProps) {
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowConfirmModal(false)}
-                                className="app-btn-secondary"
+                                className="btn btn-secondary"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={confirmAction}
-                                className={actionType === 'aprobar' ? 'app-btn-primary' : 'app-btn rounded-xl bg-red-600 text-white hover:bg-red-700'}
+                                className={actionType === 'aprobar' ? 'btn btn-primary' : 'btn btn-danger'}
                             >
                                 {actionType === 'aprobar' ? 'Aprobar' : 'Rechazar'}
                             </button>

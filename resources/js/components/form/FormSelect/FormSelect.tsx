@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import FormLabel from "@/components/form/FormLabel";
-import FormSelectItem from "./FormSelectItem.jsx";
-import FormSelectValue from "./FormSelectValue.jsx";
+import FormSelectItem from "./FormSelectItem";
+import FormSelectValue from "./FormSelectValue";
 
 interface FormSelectProps {
   name: string;

@@ -83,7 +83,7 @@ export default function DashboardIndex() {
                     />
                 </div>
 
-                <div className="col-md-6 bg-transparent d-flex p-3">
+                <div className="flex flex-col bg-transparent p-3 md:w-1/2">
                     <h2 className="font-bold mt-4 text-xl">Total docentes carrera</h2>
                     <div className="flex gap-6 mt-4">
                         <Target title="Docentes Carrera" totalValue={sumDocentesCarrera} />

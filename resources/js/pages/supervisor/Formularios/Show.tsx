@@ -306,7 +306,7 @@ export default function Show({ formulario }: ShowProps) {
 
             {/* Modal de confirmación */}
             {showConfirmModal && actionType && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
                         <h3 className="text-lg font-semibold mb-4">
                             {actionType === 'aprobar' ? 'Aprobar Formulario' : 'Rechazar Formulario'}

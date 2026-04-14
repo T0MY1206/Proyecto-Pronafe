@@ -20,8 +20,9 @@ Aplicación web para administrar la carga, revisión y seguimiento de datos de i
 - React `19` + TypeScript
 - Inertia React
 - Vite `6`
-- Tailwind CSS `4`
+- Tailwind CSS `4` (configuración vía `resources/css/app.css`, sin `tailwind.config.js`)
 - Radix UI (componentes base)
+- Lucide React (iconografía)
 
 ### Pruebas automatizadas
 - **Backend:** [Pest](https://pestphp.com/) 3 sobre PHPUnit; migraciones ejecutadas contra **SQLite en memoria** solo durante `php artisan test` (definido en `phpunit.xml`), sin sustituir MySQL en runtime.
@@ -146,11 +147,20 @@ php artisan institutos:enviar-contrasenas
 3. Supervisores revisan estados y procesan aprobación/rechazo.
 4. Administración explota información y exporta reportes.
 
+## Convenciones de estilos
+
+El proyecto usa **Tailwind CSS v4** como único sistema de estilos. Las clases de componentes reutilizables (`.btn`, `.btn-primary`, `.form-control`, `.table-report`, etc.) están definidas en `resources/css/app.css` bajo `@layer components`.
+
+- **Botones:** usar `.btn` + variante (`.btn-primary`, `.btn-secondary`, `.btn-danger`, `.btn-success`, `.btn-sm`, `.btn-lg`).
+- **Formularios:** usar el componente `FormInput` o la clase `.form-control` para inputs directos.
+- **Tablas:** usar el componente `Table` o las clases `.table .table-report`.
+- **Modales:** usar el componente `Modal` (Tailwind puro) o `ConfirmModal` para confirmaciones.
+
 ## Notas operativas
 
 - El login utiliza `login_user_name` como identificador principal.
 - Existen tests del starter kit de Laravel marcados como `skip` por no aplicar al flujo real del producto.
-- La capa visual está estandarizada sobre Tailwind v4 y en migración progresiva de estilos legacy.
+- La dependencia de Bootstrap fue eliminada; todos los estilos están consolidados en Tailwind CSS.
 
 ## Troubleshooting
 

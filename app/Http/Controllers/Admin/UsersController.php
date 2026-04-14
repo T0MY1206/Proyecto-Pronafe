@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\Rol as RolModel;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Http\Controllers\Traits\OrdersFirstColumn;
 
 class UsersController extends Controller {
 

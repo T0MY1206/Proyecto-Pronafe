@@ -120,7 +120,7 @@ const ExpandedRowForm: React.FC<ExpandedRowFormProps> = ({
     return (
         <>
             {/* Contenido del Modal */}
-            <Modal  title={data.data.instituto.nombre} onClose={onClose} >
+            <Modal  title={data.data.instituto.nombre} onClose={onClose ?? (() => {})} >
                 <div className="flex flex-col space-y-6">
                     {/*INFORMACIÓN DEL INSTITUTO */}
                     <div className="space-y-4 ">

@@ -1,24 +1,26 @@
-import React, { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
-const Modal = ({ children, title, onClose, maxWidth = '2xl' }) => {
+interface ModalProps {
+    children: ReactNode;
+    title: string;
+    onClose: () => void;
+    maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+}
 
-    // useEffect para manejar el cierre del modal con la tecla ESC
+const Modal = ({ children, title, onClose, maxWidth = '2xl' }: ModalProps) => {
     useEffect(() => {
-        const handleEscape = (e) => {
+        const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 onClose();
             }
         };
 
         document.addEventListener('keydown', handleEscape);
-
-        // Función de limpieza para remover el listener al desmontar el componente
         return () => {
             document.removeEventListener('keydown', handleEscape);
         };
     }, [onClose]);
 
-    // Clases de ancho de Tailwind
     const maxWidthClass = {
         sm: 'sm:max-w-sm',
         md: 'sm:max-w-md',
@@ -31,7 +33,7 @@ const Modal = ({ children, title, onClose, maxWidth = '2xl' }) => {
     return (
         // Overlay (Fondo oscuro y semi-transparente)
         <div
-            className="fixed inset-0 z-100 bg-black/70 flex justify-center items-start pt-16 sm:items-center sm:pt-20"
+            className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-16 sm:items-center sm:pt-20"
             aria-labelledby="modal-title"
             role="dialog"
             aria-modal="true"

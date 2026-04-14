@@ -41,14 +41,14 @@ export default function Table({
         <>
             <div className="grid grid-cols-12 gap-6 mt-2">
                 <div className="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-                    {paginate && <PaginatorData data={rows} />}
+                    {paginate && !Array.isArray(rows) && <PaginatorData data={rows as PaginatorOptions} />}
                     {children}
                 </div>
 
                 <div className="intro-y col-span-12 max-w-full">
                     <div className="max-w-full overflow-x-auto overscroll-x-contain">
                     <table className="table table-report">
-                        <TableHead head={head} options={options ?? rows} hasAction={(actions?.length ?? 0) > 0} />
+                        <TableHead head={head} options={options ?? (Array.isArray(rows) ? {} : rows)} hasAction={(actions?.length ?? 0) > 0} />
                         <TableBody
                             head={head}
                             data={Array.isArray(rowsData) ? rowsData : []}

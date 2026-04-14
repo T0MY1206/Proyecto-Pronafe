@@ -2,7 +2,7 @@ import {Link} from "@inertiajs/react";
 
 interface TableHeadProps {
     head: TableHeadOption[];
-    options: PaginatorOptions;
+    options: Partial<PaginatorOptions>;
     hasAction: boolean;
 }
 

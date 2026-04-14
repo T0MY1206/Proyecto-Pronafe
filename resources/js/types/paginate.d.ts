@@ -16,8 +16,8 @@ export interface PaginatorOptions {
     to?: number,
     total?: number,
     data?: unknown[],
-    order: string,
-    direction: string
+    order?: string,
+    direction?: string
 }
 
 export interface PaginationProp {
@@ -49,4 +49,4 @@ export interface TableAction {
 }
 
 export type ConditionAction = (data: unknown) => boolean | boolean;
-export type Co1lumnAction = (name: string) => string | string;
+export type ColumnAction = (name: string) => string | string;

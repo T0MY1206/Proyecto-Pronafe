@@ -217,9 +217,7 @@ export default function DashboardIndex({ tiposDeInstitucion: _tiposDeInstitucion
 
                             {
                                 data.ambito_gestion === "P" &&
-                                <div className="mt-3 p-2" style={{
-                                    border: "1px solid red"
-                                }}>
+                                <div className="mt-3 rounded-xl border border-red-500 p-3">
                                     <h3 className="text-lg font-bold">Información de Matrícula</h3>
                                     <div className="sm:grid grid-cols-2 gap-2">
                                         <FormInput name="monto_anual" placeholder="Monto de la matrícula anual" type="text"

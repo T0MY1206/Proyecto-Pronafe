@@ -133,7 +133,7 @@ export default function Index({ institutos, tiposInstituto, provincias, filters,
     const provinciaItems = useMemo(
         () => [
             { value: '' as const, label: 'Todas las provincias' },
-            ...(provincias?.map((p) => ({ value: String(p.id), label: p.descripcion })) ?? []),
+            ...(provincias?.map((p) => ({ value: String(p.id), label: p.descripcion ?? '' })) ?? []),
         ],
         [provincias],
     );
@@ -141,7 +141,7 @@ export default function Index({ institutos, tiposInstituto, provincias, filters,
     const tipoInstitutoItems = useMemo(
         () => [
             { value: '' as const, label: 'Todos los tipos' },
-            ...(tiposInstituto?.map((t) => ({ value: String(t.id), label: t.descripcion })) ?? []),
+            ...(tiposInstituto?.map((t) => ({ value: String(t.id), label: t.descripcion ?? '' })) ?? []),
         ],
         [tiposInstituto],
     );

@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\InstitutosController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\ActualizacionesController;
-use App\Http\Controllers\Admin\PeriodosController;
 use App\Http\Controllers\Admin\ExportController;
 use Illuminate\Support\Facades\Route;
 

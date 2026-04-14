@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useFormEvent } from '@/hooks/useFormEvent';
-import FormInput from '@/components/form/FormInput.jsx';
+import FormInput from '@/components/form/FormInput';
 import AppIcon from '../../components/Icons/AppIcon';
 import SesionLayout from '@/layouts/SesionLayout';
 

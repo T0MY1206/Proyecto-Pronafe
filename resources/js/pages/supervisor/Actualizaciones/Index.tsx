@@ -244,21 +244,21 @@ export default function Updates({ user: _user, allYears, nombreProvincia, initia
                             />
                         </div>
                     </div>
-                    <div className="col-md-6 bg-transparent d-flex p-3">
-                        <h1 className='text-lg font-bold  text-2xl'>Reporte {yearSelectedData.anio} </h1>
+                    <div className="flex flex-col bg-transparent p-3 md:w-1/2">
+                        <h1 className='text-2xl font-bold'>Reporte {yearSelectedData.anio}</h1>
                         <h2 className='font-bold mt-4 text-lg'>Total docentes carrera</h2>
-                        <div className="col-span-12 gap gap-cols-12 gap-6 mt-4 flex">
+                        <div className="flex gap-6 mt-4">
                             <Target title="Docentes Carrera" totalValue={Sumas.sumDocentesCarrera} />
                             <Target title="Docentes Carrera Practicas" totalValue={Sumas.sumDocentesPractica} />
                         </div>
                         <h2 className='font-bold mt-4 text-lg'>Alumnos matriculados al {yearSelectedData.fecha_matriculados}</h2>
-                        <div className="col-span-12 gap gap-cols-12 gap-6 mt-4 flex">
+                        <div className="flex gap-6 mt-4">
                             <Target title="1º" totalValue={Sumas.sum1Año} />
                             <Target title="2º" totalValue={Sumas.sum2Año} />
                             <Target title="3º" totalValue={Sumas.sum3Año} />
                         </div>
                         <h2 className='font-bold mt-4 text-lg'>Egresados entre el {yearSelectedData.fecha_1_egresados} y el {yearSelectedData.fecha_2_egresados}</h2>
-                        <div className="col-span-12 gap gap-cols-12 gap-6 mt-4 flex">
+                        <div className="flex gap-6 mt-4">
                             <Target title="Total de egresados" totalValue={Sumas.sumEgresados} />
                         </div>
                     </div>

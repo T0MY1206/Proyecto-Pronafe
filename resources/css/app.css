@@ -330,23 +330,6 @@ body.main {
         @apply min-w-[6.25rem];
     }
 
-    /* --- Botones / inputs de aplicación (Tailwind v4) --- */
-    .app-btn {
-        @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/60;
-    }
-
-    .app-btn-primary {
-        @apply inline-flex items-center justify-center rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/60;
-    }
-
-    .app-btn-secondary {
-        @apply inline-flex items-center justify-center rounded-xl border border-slate-400/60 bg-slate-200/90 px-4 py-2 text-sm font-semibold text-slate-800 transition-colors duration-200 hover:bg-slate-300/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600/60;
-    }
-
-    .app-input {
-        @apply w-full rounded-xl border border-slate-400/70 bg-slate-200/90 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/30;
-    }
-
     /* FormSelect: trigger y lista alineados al mismo ancho (absolute bajo el control) */
     .tom-select.ts-control {
         @apply relative w-full;
